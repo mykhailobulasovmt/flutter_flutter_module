@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:isl_sdk/main.dart';
+import 'package:isl_sdk/request_face_matching.dart';
 import 'package:remove_after_day/navigation.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -24,7 +26,8 @@ class _MyHomePageState extends State<MyHomePage> {
         setState(() {
           _ocrPhoto = ocrPhoto;
         });
-      }, (isAlive, alivenessPhoto) {}, (score) {}),
+      }, (isAlive, alivenessPhoto) {}, (score) {}, RequestFaceMatching(_ocrPhoto, _alivenessPhoto),
+      ),
     );
   }
 
@@ -36,23 +39,35 @@ class _MyHomePageState extends State<MyHomePage> {
           _alivenessPhoto = alivenessPhoto;
           _isAlive = isAlive;
         });
-      }, (score) {}),
+      }, (score) {}, RequestFaceMatching(_ocrPhoto, _alivenessPhoto),),
     );
   }
 
   void _faceMatch() {
-    Navigator.of(context).pushNamed(
-      '/islSdk',
-      arguments: ISLArgs(IslSdkType.faceMatch, (ocrPhoto, f) {}, (isAlive, alivenessPhoto) {}, (score) {
-        setState(() {
-          _score = score;
-        });
-      }),
-    );
+    print('------------0 _ocrPhoto = $_ocrPhoto');
+    print('------------0 _alivenessPhoto = $_alivenessPhoto');
+    if (_ocrPhoto != null && _alivenessPhoto != null) {
+      Navigator.of(context).pushNamed(
+        '/islSdk',
+        arguments: ISLArgs(
+          IslSdkType.faceMatch,
+          (ocrPhoto, f) {},
+          (isAlive, alivenessPhoto) {},
+          (score) {
+            setState(() {
+              print('------------score = $score');
+              _score = score;
+            });
+          },
+          RequestFaceMatching(_ocrPhoto, _alivenessPhoto),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("simple flutter app"),
@@ -62,6 +77,17 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            if(_ocrPhoto != null) Container(
+              height: 100,
+              width: 100,
+              child:  Image.memory(_ocrPhoto!),
+            ),
+            if(_alivenessPhoto != null) Container(
+              height: 100,
+              width: 100,
+              child:  Image.memory(_alivenessPhoto!),
+            ),
+
             // if (alivenessCheckImage != null) Image.memory(alivenessCheckImage!),
             ElevatedButton(
               onPressed: () => _ocr(), // _LaunchTempOcr(),

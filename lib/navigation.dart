@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:isl_sdk/main.dart';
+import 'package:isl_sdk/request_face_matching.dart';
 import 'package:remove_after_day/main.dart';
 import 'package:remove_after_day/page.dart';
 
@@ -19,6 +20,7 @@ Widget getScreen(String? name, {Object? arguments}) {
         callBackAliveness: args.callBackAliveness,
         callBackFaceMatch: args.callBackFaceMatch,
         callBackOCR: args.callBackOCR,
+        requestFaceMatching: args.requestFaceMatching,
       );
     default:
       return const SizedBox.shrink();
@@ -26,10 +28,11 @@ Widget getScreen(String? name, {Object? arguments}) {
 }
 
 class ISLArgs {
-  ISLArgs(this.islSdkType, this.callBackOCR, this.callBackAliveness, this.callBackFaceMatch);
+  ISLArgs(this.islSdkType, this.callBackOCR, this.callBackAliveness, this.callBackFaceMatch, this.requestFaceMatching);
 
   final IslSdkType islSdkType;
   final Function(Uint8List uintImage, Map<String, String> map)? callBackOCR;
   final Function(bool isAlive, Uint8List uintImage)? callBackAliveness;
   final Function(double score)? callBackFaceMatch;
+  final RequestFaceMatching? requestFaceMatching;
 }
